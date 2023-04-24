@@ -1,11 +1,16 @@
 import { ADD_POKEMON, SEARCH_POKEMON_BY_NAME, SEARCH_POKEMON_BY_ID, FILTER_AND_ORDER_POKEMONS, RESET_POKEMONS_FILTERS, GET_POKEMONS, GET_TYPES, SET_CURRENT_PAGE, SET_SELECTED_TYPE_FILTER, SET_SELECTED_SOURCE_FILTER, SET_SELECTED_ORDER } from "./types";
 import axios from 'axios';
 
+// LOCAL BACKEND
+// axios.defaults.baseURL = 'http://localhost:3001';
+// BACKEND IN RAILWAY
+axios.defaults.baseURL = 'https://pokemon-back-production-b1b3.up.railway.app/';
+
 export function addPokemon(poke) {
     return async function (dispatch) {
         try {
             // Add created pokemon to DB
-            const { data } = await axios.post('http://localhost:3001/pokemons', poke);
+            const { data } = await axios.post('/pokemons', poke);
             poke.created = true; // Add created key and set to true to mark it as a created pokemon (not retrieved form API)
             poke.id = data.id;  // Add id generated in DB to poke (not using data to add to store because it doesn't have types)
             
@@ -50,7 +55,7 @@ export function resetPokemonsFilters() {
 export function getPokemons() {
     return async function (dispatch) {
         try {
-            let pokesFromBackend = await (await axios.get(`http://localhost:3001/pokemons`)).data;
+            let pokesFromBackend = await (await axios.get(`/pokemons`)).data;
 
             dispatch({
                 type: GET_POKEMONS,
@@ -65,7 +70,7 @@ export function getPokemons() {
 export function getTypes() {
     return async function (dispatch) {
         try {
-            const typesFromBackend = await (await axios.get('http://localhost:3001/types')).data;
+            const typesFromBackend = await (await axios.get('/types')).data;
 
             dispatch({
                 type: GET_TYPES,
