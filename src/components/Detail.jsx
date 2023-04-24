@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from './Button.jsx';
 import styles from './Detail.module.css';
+import axios from 'axios';
+
 
 export default function Detail() {
     const { pokeId } = useParams();
@@ -20,18 +22,34 @@ export default function Detail() {
 
     useEffect(() => {
         // Retrieve pokemon from backend instead of from store, in case more specs are needed
-        fetch(`http://localhost:3001/pokemons/${pokeId}`)
-            .then((response) => response.json())
-            .then((poke) => {
-                if (poke.name) {
-                    setPokemon(poke);
+
+        async function fetchPoke() {
+            try {
+                const { data } = await axios.get(`/pokemons/${pokeId}`);  // Axios base URL set in redux/actions/index.js
+                if (data.name) {
+                    setPokemon(data);
                 } else {
-                    window.alert(`No pokemon found with this ID: ${pokeId}`);
+                    window.alert(`No pokemon found with id ${pokeId}`);
                 }
-            })
-            .catch((err) => {
-                window.alert(`No pokemon found with this ID: ${pokeId}`);
-            });
+            }
+            catch (error) {
+                window.alert(`No pokemon found with id ${pokeId}: ${error.message}`);
+            }
+        }
+        fetchPoke();
+
+        // fetch(`http://localhost:3001/pokemons/${pokeId}`)
+        //     .then((response) => response.json())
+        //     .then((poke) => {
+        //         if (poke.name) {
+        //             setPokemon(poke);
+        //         } else {
+        //             window.alert(`No pokemon found with this ID: ${pokeId}`);
+        //         }
+        //     })
+        //     .catch((err) => {
+        //         window.alert(`No pokemon found with this ID: ${pokeId}`);
+        //     });
         return setPokemon({});
     }, [pokeId]);
 
